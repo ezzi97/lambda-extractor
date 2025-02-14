@@ -1,0 +1,38 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: SAM template for Python Lambda with Poetry
+
+Globals:
+  Function:
+    Timeout: 30
+    MemorySize: 128
+    Runtime: python3.9
+
+Resources:
+  LambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./lambda_api
+      Handler: handler.lambda_handler
+      Description: A sample Lambda function
+      Architectures:
+        - x86_64
+      Environment:
+        Variables:
+          POWERTOOLS_SERVICE_NAME: lambda-api
+      Tags:
+        Environment: dev
+        Project: lambda-api
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /recipe
+            Method: get
+            Auth:
+              ApiKeyRequired: true
+
+Outputs:
+  LambdaFunction:
+    Description: Lambda Function ARN
+    Value: !GetAtt LambdaFunction.Arn
